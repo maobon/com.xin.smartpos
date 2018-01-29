@@ -5,7 +5,8 @@ import android.util.Base64;
 import java.io.UnsupportedEncodingException;
 
 /**
- * Created by zhuzqb on 2017/11/17.
+ * Created by xin on 1/29/18.
+ * Base64 工具类
  */
 
 public class Base64Utils {

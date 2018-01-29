@@ -6,12 +6,11 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 
 /**
- * MD5加密的工具类
- *
- * @author 朱志强
- * @created at 2017/10/26 上午11:14
+ * Created by xin on 1/29/18.
+ * Message digest util
  */
 public class MD5Util {
+
     public static String encode(String str) {
         try {
             byte[] bytes = null;
@@ -32,7 +31,6 @@ public class MD5Util {
         } catch (GeneralSecurityException gse) {
             return "";
         } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;

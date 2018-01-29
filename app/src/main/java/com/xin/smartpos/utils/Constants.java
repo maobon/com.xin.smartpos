@@ -4,34 +4,53 @@ package com.xin.smartpos.utils;
 import okhttp3.MediaType;
 
 /**
- * 常量的定义
- *
- * @author 朱志强
- * @created at 2017/10/27 上午11:33
+ * Created by xin on 1/29/18.
+ * 常量
  */
+
 public class Constants {
 
-    //登录的接口
-    public static final String LOGINURL = "https://192.168.6.202:9443/WatchPay/app/login";
-    public static final String LOGOUT = "https://192.168.6.202:9443/WatchPay/app/logout";
-    //绑定的接口
-    public static final String BINDING = "https://192.168.6.202:9443/WatchPay/app/binding";
-    //绑定查询的接口
-    public static final String QUERTBINDING = "https://192.168.6.202:9443/WatchPay/app/queryBinding";
-    //向手表同步设置的接口
-    public static final String GETPARAM = "https://192.168.6.202:9443/WatchPay/app/getParam";
-    //修改个人参数设置接口
-    public static final String UPDATEPARAM = "https://192.168.6.202:9443/WatchPay/app/updateParam";
-    //上传GPS接口
-    public static final String SYNCHROMSG = "https://192.168.6.202:9443/WatchPay/app/synchroMsg";
-    //查询交易详情接口
-    public static final String QUERYTRANSMSG = "https://192.168.6.202:9443/WatchPay/app/queryTransMsg";
-    //生成支付码接口
-    public static final String GENQR = "https://192.168.6.202:9443/WatchPay/app/genQR";
-    //在线扫码支付接口
-    public static final String ONLINEPAY = "https://192.168.6.202:9443/WatchPay/app/onlinePay";
-    //okhttp请求的类型
+    // 在线扫码支付接口
+    public static final String PAY_ONLINE = "https://192.168.6.202:9443/WatchPay/app/onlinePay";
+    // okhttp请求的类型
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    //解绑接口
-    public static final String UNBINDING = "https://192.168.6.202:9443/WatchPay/app/unBinding";
+
+    // Baidu Map
+    /**
+     * GPS定位结果，GPS定位成功
+     */
+    public static final int GPS_LOCATION_SUCCESS = 61;
+    /**
+     * 无法获取有效定位依据，定位失败，请检查运营商网络或者WiFi网络是否正常开启，尝试重新请求定位
+     */
+    public static final int LOCATION_FAILED = 62;
+    /**
+     * 网络异常，没有成功向服务器发起请求，请确认当前测试手机网络是否通畅，尝试重新请求定位
+     */
+    public static final int NETWORK_ERROR = 63;
+
+    /**
+     * 离线定位结果。通过requestOfflineLocaiton调用时对应的返回结果
+     */
+    public static final int OFFLINE_LOCATION = 66;
+    /**
+     * 网络连接失败时，查找本地离线定位时对应的返回结果
+     */
+    public static final int NETWORK_ERROR_CHECK_OFFLINE_LOCATION = 68;
+    /**
+     * 网络定位结果，网络定位成功
+     */
+    public static final int NETWORK_LOCATION_SUCCESS = 161;
+    /**
+     * 请求串密文解析失败，一般是由于客户端SO文件加载失败造成，请严格参照开发指南或demo开发，放入对应SO文件
+     */
+    public static final int PARSE_FAILED = 162;
+    /**
+     * 服务端定位失败，请您检查是否禁用获取位置信息权限，尝试重新请求定位
+     */
+    public static final int SERVER_LOCATION_FAILED = 167;
+    /**
+     * AK不存在或者非法，请按照说明文档重新申请AK
+     */
+    public static final int AK_INVALID = 505;
 }

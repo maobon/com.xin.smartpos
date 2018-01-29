@@ -25,11 +25,11 @@ public class MacUtils {
             InputStreamReader ir = new InputStreamReader(pp.getInputStream());
             LineNumberReader input = new LineNumberReader(ir);
 
-            for (; null != str;) {
+            for (; null != str; ) {
                 str = input.readLine();
                 if (str != null) {
                     macSerial = str.trim();// 去空格
-                    macSerial = str.replace(":","");   //去冒号
+                    macSerial = str.replace(":", "");   //去冒号
                     break;
                 }
             }

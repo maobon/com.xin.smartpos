@@ -4,20 +4,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
- * 保存用户的工具类
- *
- * @author 朱志强
- * @created at 2017/10/30 下午4:13
+ * Created by xin on 1/29/18.
+ * SharedPreference util
  */
 
 public class SharedPrefsUtil {
 
-    public final static String SETTING = "ACCOUNTNUMBER";    //账号
+    public final static String SETTING = "ACCOUNTNUMBER";    // 账号
 
     public static void putValue(Context context, String key, String value) {
         SharedPreferences.Editor sp = context.getSharedPreferences(SETTING, Context.MODE_PRIVATE).edit();
         sp.putString(key, value);
-        sp.commit();
+        sp.apply();
     }
 
     public static String getValue(Context context, String key, String defValue) {

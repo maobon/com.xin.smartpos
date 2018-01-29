@@ -7,14 +7,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.location.Address;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
@@ -22,10 +21,21 @@ import com.baidu.location.LocationClientOption;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 import com.xin.smartpos.R;
-import com.xin.smartpos.bean.RequestStateJsonBean;
+import com.xin.smartpos.entity.RequestStateJsonBean;
 import com.xin.smartpos.utils.AnalysisJson;
+import com.xin.smartpos.utils.LoadingBarHelper;
 
 import java.lang.ref.WeakReference;
+
+import static com.xin.smartpos.utils.Constants.AK_INVALID;
+import static com.xin.smartpos.utils.Constants.GPS_LOCATION_SUCCESS;
+import static com.xin.smartpos.utils.Constants.LOCATION_FAILED;
+import static com.xin.smartpos.utils.Constants.NETWORK_ERROR;
+import static com.xin.smartpos.utils.Constants.NETWORK_ERROR_CHECK_OFFLINE_LOCATION;
+import static com.xin.smartpos.utils.Constants.NETWORK_LOCATION_SUCCESS;
+import static com.xin.smartpos.utils.Constants.OFFLINE_LOCATION;
+import static com.xin.smartpos.utils.Constants.PARSE_FAILED;
+import static com.xin.smartpos.utils.Constants.SERVER_LOCATION_FAILED;
 
 
 /**
@@ -42,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     public LocationClient mLocationClient;
     private MyLocationListener myListener = new MyLocationListener();
+    private TextView tvLocationResult;
 
 
     @Override
@@ -51,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
         initBaiduSDK();
-
-        Toast.makeText(this, "GPS定位中 请稍后", Toast.LENGTH_SHORT).show();
     }
 
     private void initBaiduSDK() {
@@ -63,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         LocationClientOption option = new LocationClientOption();
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
         option.setCoorType("bd09ll");
-        option.setScanSpan(0); // 只定位一次
+        option.setScanSpan(1000);
         option.setOpenGps(true);
         option.setLocationNotify(true);
         option.setIgnoreKillProcess(false);
@@ -78,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        tvLocationResult = findViewById(R.id.tv_location_result);
         rootView = findViewById(R.id.sv_rootview);
         etAmount = findViewById(R.id.et_amount);
         etLatitude = findViewById(R.id.et_latitude);
@@ -98,10 +108,15 @@ public class MainActivity extends AppCompatActivity {
             if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
                 String result = bundle.getString(CodeUtils.RESULT_STRING);
 
+                tvLocationResult.setText(result);
+
                 // TODO 提交给服务端
                 // 1. 商户输入价格
                 // 2. 扫描二维码的结果
                 // 3. POS机当前的GPS坐标
+
+                LoadingBarHelper.showLoadingBar(MainActivity.this);
+
 
             } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
                 Toast.makeText(MainActivity.this, "二维码扫描失败", Toast.LENGTH_LONG).show();
@@ -112,8 +127,6 @@ public class MainActivity extends AppCompatActivity {
     public class MyLocationListener extends BDAbstractLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
-            Snackbar.make(rootView, "当前位置获取成功", Snackbar.LENGTH_SHORT).show();
-
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
 
@@ -121,11 +134,10 @@ public class MainActivity extends AppCompatActivity {
             etLongitude.setText(String.valueOf(longitude));
 
             float radius = location.getRadius();
-            Address address = location.getAddress();
+            tvLocationResult.setText(latitude + " // " + longitude + " radius= " + radius);
 
-            String coorType = location.getCoorType();
             int errorCode = location.getLocType();
-            Log.d("TAG", "coorType= " + coorType + " errorCode= " + errorCode);
+            parseBaiduMapErrorCode(errorCode);
         }
     }
 
@@ -149,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static class MyHandler extends Handler {
         private WeakReference<Context> reference;
+
         public MyHandler(Context context) {
             reference = new WeakReference<Context>(context);
         }
@@ -188,5 +201,40 @@ public class MainActivity extends AppCompatActivity {
         } else if (result.equals("11")) {
 
         }
+    }
+
+    private void parseBaiduMapErrorCode(int errorCode) {
+        switch (errorCode) {
+            case GPS_LOCATION_SUCCESS:
+                mLocationClient.stop();
+                Snackbar.make(rootView, "GPS定位成功", Snackbar.LENGTH_SHORT).show();
+                break;
+
+            case NETWORK_LOCATION_SUCCESS:
+                mLocationClient.stop();
+                Snackbar.make(rootView, "网络定位成功", Snackbar.LENGTH_SHORT).show();
+                break;
+
+            case LOCATION_FAILED:
+            case NETWORK_ERROR:
+            case OFFLINE_LOCATION:
+            case NETWORK_ERROR_CHECK_OFFLINE_LOCATION:
+            case PARSE_FAILED:
+            case SERVER_LOCATION_FAILED:
+                Snackbar.make(rootView, "定位失败", Snackbar.LENGTH_SHORT).show();
+                break;
+
+            case AK_INVALID:
+                Snackbar.make(rootView, "AK码错误", Snackbar.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    private void showLoadingBar() {
+
+    }
+
+    private void dismissLoadingBar() {
+
     }
 }

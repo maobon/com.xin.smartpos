@@ -21,7 +21,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
 
     <application
@@ -33,10 +32,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- BaiduMap SDK -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="vf026PQrDCBUXKHSCl4pFQiCgVP4HMqu" />
 
+        <!-- 欢迎页 -->
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,8 +46,10 @@
             </intent-filter>
         </activity>
 
+        <!-- Main -->
         <activity android:name=".activity.SplashActivity" />
 
+        <!-- BaiduMap Location Service -->
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"

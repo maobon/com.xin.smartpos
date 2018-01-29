@@ -50,7 +50,7 @@ public class HttpsUtils {
         return ssfFactory;
     }
 
-    //实现X509TrustManager接口
+    // 实现X509TrustManager接口
     public static class MyTrustManager implements X509TrustManager {
         @SuppressLint("TrustAllX509TrustManager")
         @Override
@@ -68,7 +68,7 @@ public class HttpsUtils {
         }
     }
 
-    //实现HostnameVerifier接口
+    // 实现HostnameVerifier接口
     private static class TrustAllHostnameVerifier implements HostnameVerifier {
         @SuppressLint("BadHostnameVerifier")
         @Override

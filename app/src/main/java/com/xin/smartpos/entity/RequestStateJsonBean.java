@@ -1,13 +1,12 @@
-package com.xin.smartpos.bean;
+package com.xin.smartpos.entity;
 
 
 /**
- * 请求状态的实体类
- *
- * @author 朱志强
- * @created at 2017/11/16 下午3:11
+ * Created by xin on 1/29/18.
+ * 状态信息
  */
 public class RequestStateJsonBean {
+
     private String result;     //状态
     private String message;    //提示信息
     private int transExCount;  //交易笔数
