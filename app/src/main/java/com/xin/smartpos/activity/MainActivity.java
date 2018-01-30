@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -128,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
                 String qrCode = bundle.getString(CodeUtils.RESULT_STRING);
                 // debug use
                 tvDebugUse.setText(qrCode);
+
+                Log.wtf("HAHA", "QRCode=> " + qrCode);
 
                 // 支付信息
                 QRCodePayment qrCodePayment = new QRCodePayment();
