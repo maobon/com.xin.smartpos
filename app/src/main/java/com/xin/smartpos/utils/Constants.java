@@ -10,12 +10,12 @@ import okhttp3.MediaType;
 
 public class Constants {
 
-    public static final boolean USE_DEBUG = true;
+    public static final boolean USE_DEBUG = false;
 
     /**
      * POS机扫码支付URL
      */
-    public static final String PAY_SCAN_WATCH_QR_CODE = "http://192.168.6.202:9090/WatchCustomerPay/app/offlinePay";
+    public static final String PAY_SCAN_WATCH_QR_CODE = "https://192.168.6.202:7443/WatchCustomerPay/app/offlinePay";
     /**
      * okHttp请求JSON类型
      */

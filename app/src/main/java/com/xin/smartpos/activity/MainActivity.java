@@ -28,7 +28,6 @@ import com.xin.smartpos.entity.QRCodePayment;
 import com.xin.smartpos.entity.RequestStateJsonBean;
 import com.xin.smartpos.network.HttpsUtils;
 import com.xin.smartpos.utils.AnalysisJson;
-import com.xin.smartpos.utils.Base64Utils;
 import com.xin.smartpos.utils.LoadingBarHelper;
 
 import java.lang.ref.WeakReference;
@@ -130,17 +129,17 @@ public class MainActivity extends AppCompatActivity {
                 // debug use
                 tvDebugUse.setText(qrCode);
 
-                String payImgBase64 = Base64Utils.encodeToBase64(qrCode);
                 // 支付信息
                 QRCodePayment qrCodePayment = new QRCodePayment();
-                qrCodePayment.setPayImg(payImgBase64);
+                qrCodePayment.setPayImg(qrCode);
                 qrCodePayment.setMoney(etAmount.getText().toString());
                 qrCodePayment.setGpsLon(etLongitude.getText().toString());
                 qrCodePayment.setGpsLat(etLatitude.getText().toString());
 
                 Gson gson = new Gson();
+                String str = gson.toJson(qrCodePayment);
                 // 请求网络
-                HttpsUtils.OkhttpPost(PAY_SCAN_WATCH_QR_CODE, gson.toJson(qrCodePayment), networkRequestHandler, 0);
+                HttpsUtils.OkhttpPost(PAY_SCAN_WATCH_QR_CODE, str, networkRequestHandler, 0);
                 LoadingBarHelper.showLoadingBar(MainActivity.this);
 
             } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
@@ -210,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
             if (mainActivity != null) {
                 switch (msg.what) {
                     case 10:
+                        getRequestState(json, mainActivity);
                         LoadingBarHelper.dismissLoadingBar();
                         PaymentResultActivity.startActivity(mainActivity, true);
                         break;
@@ -234,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
         RequestStateJsonBean rsjs = AnalysisJson.requestState(json);
         String result = rsjs.getResult();
         String message = rsjs.getMessage();
+
         if (result.equals("10")) {
 
         } else if (result.equals("11")) {
