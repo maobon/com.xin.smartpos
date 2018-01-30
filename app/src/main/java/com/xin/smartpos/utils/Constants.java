@@ -10,7 +10,7 @@ import okhttp3.MediaType;
 
 public class Constants {
 
-    public static final boolean USE_DEBUG = false;
+    public static final boolean USE_DEBUG = true;
 
     /**
      * POS机扫码支付URL

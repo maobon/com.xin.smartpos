@@ -28,6 +28,7 @@ import com.xin.smartpos.entity.QRCodePayment;
 import com.xin.smartpos.entity.RequestStateJsonBean;
 import com.xin.smartpos.network.HttpsUtils;
 import com.xin.smartpos.utils.AnalysisJson;
+import com.xin.smartpos.utils.Base64Utils;
 import com.xin.smartpos.utils.LoadingBarHelper;
 
 import java.lang.ref.WeakReference;
@@ -113,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (resultCode != RESULT_OK || data == null) {
             Snackbar.make(rootView, "支付操作未完成", Snackbar.LENGTH_SHORT).show();
             return;
@@ -126,14 +126,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
-                String result = bundle.getString(CodeUtils.RESULT_STRING);
-
+                String qrCode = bundle.getString(CodeUtils.RESULT_STRING);
                 // debug use
-                tvDebugUse.setText(result);
+                tvDebugUse.setText(qrCode);
 
-                // 提交支付信息
+                String payImgBase64 = Base64Utils.encodeToBase64(qrCode);
+                // 支付信息
                 QRCodePayment qrCodePayment = new QRCodePayment();
-                qrCodePayment.setPayImg(result);
+                qrCodePayment.setPayImg(payImgBase64);
                 qrCodePayment.setMoney(etAmount.getText().toString());
                 qrCodePayment.setGpsLon(etLongitude.getText().toString());
                 qrCodePayment.setGpsLat(etLatitude.getText().toString());
@@ -149,6 +149,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 百度定位SDK回调
+     */
     public class BaiduLocationListener extends BDAbstractLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
@@ -188,6 +191,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * 处理网络请求
+     */
     private static class NetworkRequestHandler extends Handler {
 
         private WeakReference<Context> reference;
