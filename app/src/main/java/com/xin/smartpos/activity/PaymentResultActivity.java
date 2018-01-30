@@ -20,11 +20,18 @@ public class PaymentResultActivity extends AppCompatActivity {
     private ImageView ivSuccessIcon, ivFailedIcon;
     private TextView tvSuccess, tvFailed;
 
+    /**
+     * start PaymentResultActivity
+     *
+     * @param context       context
+     * @param paymentStatus 是否支付成功
+     */
     public static void startActivity(Context context, boolean paymentStatus) {
         Intent intent = new Intent(context, PaymentResultActivity.class);
         intent.putExtra("status", paymentStatus);
         context.startActivity(intent);
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

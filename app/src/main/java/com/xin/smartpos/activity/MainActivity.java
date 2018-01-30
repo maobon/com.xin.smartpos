@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ import static com.xin.smartpos.utils.Constants.OFFLINE_LOCATION;
 import static com.xin.smartpos.utils.Constants.PARSE_FAILED;
 import static com.xin.smartpos.utils.Constants.PAY_SCAN_WATCH_QR_CODE;
 import static com.xin.smartpos.utils.Constants.SERVER_LOCATION_FAILED;
+import static com.xin.smartpos.utils.Constants.USE_DEBUG;
 
 
 /**
@@ -50,17 +52,16 @@ import static com.xin.smartpos.utils.Constants.SERVER_LOCATION_FAILED;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int REQ_CODE_SCANNER_ACTIVITY = 100;
+    public static final int REQ_CODE_SCANNER_ACTIVITY = 200;
 
     private EditText etAmount, etLongitude, etLatitude;
     private ScrollView rootView;
+    private TextView tvDebugUse;
 
-    public LocationClient mLocationClient;
-    private MyLocationListener myListener = new MyLocationListener();
-    private TextView tvLocationResult;
-
+    public LocationClient locationClient;
+    private BaiduLocationListener baiduLocationListener = new BaiduLocationListener();
     private NetworkRequestHandler networkRequestHandler;
-
+    // 是否定位成功
     private boolean isLocationSucc = false;
 
 
@@ -76,8 +77,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initBaiduSDK() {
-        mLocationClient = new LocationClient(getApplicationContext());
-        mLocationClient.registerLocationListener(myListener);
+        locationClient = new LocationClient(getApplicationContext());
+        locationClient.registerLocationListener(baiduLocationListener);
 
         // Baidu location SDK config
         LocationClientOption option = new LocationClientOption();
@@ -91,14 +92,19 @@ public class MainActivity extends AppCompatActivity {
         option.setWifiCacheTimeOut(5 * 60 * 1000);
         option.setEnableSimulateGps(false);
 
-        mLocationClient.setLocOption(option);
+        locationClient.setLocOption(option);
 
         // 开始定位
-        mLocationClient.start();
+        locationClient.start();
     }
 
     private void initViews() {
-        tvLocationResult = findViewById(R.id.tv_location_result);
+        tvDebugUse = findViewById(R.id.tv_location_result);
+        if (USE_DEBUG) {
+            tvDebugUse.setVisibility(View.VISIBLE);
+        } else {
+            tvDebugUse.setVisibility(View.GONE);
+        }
         rootView = findViewById(R.id.sv_rootview);
         etAmount = findViewById(R.id.et_amount);
         etLatitude = findViewById(R.id.et_latitude);
@@ -108,7 +114,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (resultCode != RESULT_OK || data == null) return;
+        if (resultCode != RESULT_OK || data == null) {
+            Snackbar.make(rootView, "支付操作未完成", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
 
         if (requestCode == REQ_CODE_SCANNER_ACTIVITY) {
             Bundle bundle = data.getExtras();
@@ -119,12 +128,10 @@ public class MainActivity extends AppCompatActivity {
             if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
                 String result = bundle.getString(CodeUtils.RESULT_STRING);
 
-                tvLocationResult.setText(result);
+                // debug use
+                tvDebugUse.setText(result);
 
-                // TODO 提交给服务端
-                // 1. 商户输入价格
-                // 2. 扫描二维码的结果
-                // 3. POS机当前的GPS坐标
+                // 提交支付信息
                 QRCodePayment qrCodePayment = new QRCodePayment();
                 qrCodePayment.setPayImg(result);
                 qrCodePayment.setMoney(etAmount.getText().toString());
@@ -142,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class MyLocationListener extends BDAbstractLocationListener {
+    public class BaiduLocationListener extends BDAbstractLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
             double latitude = location.getLatitude();
@@ -152,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
             etLongitude.setText(String.valueOf(longitude));
 
             float radius = location.getRadius();
-            tvLocationResult.setText(latitude + " // " + longitude + " radius= " + radius);
+            tvDebugUse.setText(latitude + " // " + longitude + " radius= " + radius);
 
             int errorCode = location.getLocType();
             parseBaiduMapErrorCode(errorCode);
@@ -169,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_nextstep:
-
                 if (!TextUtils.isEmpty(etAmount.getText().toString()) && isLocationSucc) {
                     Intent intent = new Intent(getApplication(), CaptureActivity.class);
                     startActivityForResult(intent, REQ_CODE_SCANNER_ACTIVITY);
@@ -232,18 +238,18 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 解析百度地图响应
      *
-     * @param errorCode
+     * @param errorCode 错误码
      */
     private void parseBaiduMapErrorCode(int errorCode) {
         switch (errorCode) {
             case GPS_LOCATION_SUCCESS:
-                mLocationClient.stop();
+                locationClient.stop();
                 isLocationSucc = true;
                 Snackbar.make(rootView, "GPS定位成功", Snackbar.LENGTH_SHORT).show();
                 break;
 
             case NETWORK_LOCATION_SUCCESS:
-                mLocationClient.stop();
+                locationClient.stop();
                 isLocationSucc = true;
                 Snackbar.make(rootView, "网络定位成功", Snackbar.LENGTH_SHORT).show();
                 break;
@@ -254,13 +260,13 @@ public class MainActivity extends AppCompatActivity {
             case NETWORK_ERROR_CHECK_OFFLINE_LOCATION:
             case PARSE_FAILED:
             case SERVER_LOCATION_FAILED:
-                mLocationClient.stop();
+                locationClient.stop();
                 isLocationSucc = false;
                 Snackbar.make(rootView, "定位失败", Snackbar.LENGTH_SHORT).show();
                 break;
 
             case AK_INVALID:
-                mLocationClient.stop();
+                locationClient.stop();
                 isLocationSucc = false;
                 Snackbar.make(rootView, "AK码错误", Snackbar.LENGTH_SHORT).show();
                 break;

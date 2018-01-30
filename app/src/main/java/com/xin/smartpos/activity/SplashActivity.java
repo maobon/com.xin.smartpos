@@ -20,9 +20,11 @@ public class SplashActivity extends AppCompatActivity {
     private static final int MSG_START_MAIN_ACTIVITY = 100;
     private static final int DELAY_TIME = 2000;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -34,6 +36,7 @@ public class SplashActivity extends AppCompatActivity {
             public boolean handleMessage(Message msg) {
                 if (msg.what == MSG_START_MAIN_ACTIVITY) {
                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                    finish();
                 }
                 return true;
             }

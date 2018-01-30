@@ -10,6 +10,8 @@ import okhttp3.MediaType;
 
 public class Constants {
 
+    public static final boolean USE_DEBUG = false;
+
     /**
      * POS机扫码支付URL
      */

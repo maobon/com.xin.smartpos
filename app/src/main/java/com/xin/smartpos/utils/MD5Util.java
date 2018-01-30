@@ -9,6 +9,7 @@ import java.security.MessageDigest;
  * Created by xin on 1/29/18.
  * Message digest util
  */
+
 public class MD5Util {
 
     public static String encode(String str) {

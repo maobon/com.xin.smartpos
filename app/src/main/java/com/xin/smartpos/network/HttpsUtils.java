@@ -121,7 +121,6 @@ public class HttpsUtils {
                     msg.obj = respon;
                     mHandler.sendMessage(msg);
                 }
-
             }
         });
         return requestjson;

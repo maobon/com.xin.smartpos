@@ -7,9 +7,9 @@ package com.xin.smartpos.entity;
  */
 public class RequestStateJsonBean {
 
-    private String result;     //状态
-    private String message;    //提示信息
-    private int transExCount;  //交易笔数
+    private String result;     // 状态
+    private String message;    // 提示信息
+    private int transExCount;  // 交易笔数
 
     public void setTransExCount(int transExCount) {
         this.transExCount = transExCount;
