@@ -10,10 +10,15 @@ import okhttp3.MediaType;
 
 public class Constants {
 
-    // 在线扫码支付接口
-    public static final String PAY_ONLINE = "https://192.168.6.202:9443/WatchPay/app/onlinePay";
-    // okhttp请求的类型
+    /**
+     * POS机扫码支付URL
+     */
+    public static final String PAY_SCAN_WATCH_QR_CODE = "http://192.168.6.202:9090/WatchCustomerPay/app/offlinePay";
+    /**
+     * okHttp请求JSON类型
+     */
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
 
     // Baidu Map
     /**

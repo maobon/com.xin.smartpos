@@ -27,4 +27,5 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
     implementation files('libs/BaiduLBS_Android.jar')
     implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
