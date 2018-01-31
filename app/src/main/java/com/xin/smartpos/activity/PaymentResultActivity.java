@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,10 +26,12 @@ public class PaymentResultActivity extends AppCompatActivity {
      *
      * @param context       context
      * @param paymentStatus 是否支付成功
+     * @param message       服务端响应信息
      */
-    public static void startActivity(Context context, boolean paymentStatus) {
+    public static void startActivity(Context context, boolean paymentStatus, String message) {
         Intent intent = new Intent(context, PaymentResultActivity.class);
         intent.putExtra("status", paymentStatus);
+        intent.putExtra("message", message);
         context.startActivity(intent);
     }
 
@@ -39,10 +42,16 @@ public class PaymentResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_payment_result);
 
         boolean status = getIntent().getBooleanExtra("status", false);
-        initViews(status);
+        String msg = getIntent().getStringExtra("message");
+
+        initViews(status, msg);
     }
 
-    private void initViews(boolean status) {
+    /**
+     * @param status  支付状态
+     * @param message serverResp
+     */
+    private void initViews(boolean status, String message) {
         ivSuccessIcon = findViewById(R.id.iv_succ_icon);
         ivFailedIcon = findViewById(R.id.iv_failed_icon);
         tvSuccess = findViewById(R.id.tv_result_success);
@@ -51,9 +60,19 @@ public class PaymentResultActivity extends AppCompatActivity {
         if (status) {
             ivSuccessIcon.setVisibility(View.VISIBLE);
             tvSuccess.setVisibility(View.VISIBLE);
+            tvSuccess.setText(message);
         } else {
             ivFailedIcon.setVisibility(View.VISIBLE);
             tvFailed.setVisibility(View.VISIBLE);
+            tvFailed.setText(message);
         }
+
+        Button btnBack = findViewById(R.id.btn_back);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }

@@ -209,17 +209,21 @@ public class MainActivity extends AppCompatActivity {
             super.handleMessage(msg);
             String json = (String) msg.obj;
             MainActivity mainActivity = (MainActivity) reference.get();
+
+            Log.wtf("HAHA", "serverResp=>> " + json);
+
             if (mainActivity != null) {
                 switch (msg.what) {
                     case 10:
-                        getRequestState(json, mainActivity);
+                        // 服务端正常响应
                         LoadingBarHelper.dismissLoadingBar();
-                        PaymentResultActivity.startActivity(mainActivity, true);
+                        getRequestState(json, mainActivity);
                         break;
 
                     case 11:
+                        // 网络异常
                         LoadingBarHelper.dismissLoadingBar();
-                        PaymentResultActivity.startActivity(mainActivity, false);
+                        PaymentResultActivity.startActivity(mainActivity, false, "网络异常");
                         break;
                 }
             }
@@ -228,20 +232,19 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * 获取请求的状态
-     *
-     * @param json
-     * @param loginActivity
+     * 解析服务端响应报文
      */
-    private static void getRequestState(String json, MainActivity loginActivity) {
-        RequestStateJsonBean rsjs = AnalysisJson.requestState(json);
-        String result = rsjs.getResult();
-        String message = rsjs.getMessage();
+    private static void getRequestState(String json, MainActivity mainActivity) {
+        RequestStateJsonBean rsjb = AnalysisJson.requestState(json);
+        String result = rsjb.getResult();
+        String message = rsjb.getMessage();
 
         if (result.equals("10")) {
-
+            // 支付成功
+            PaymentResultActivity.startActivity(mainActivity, true, message);
         } else if (result.equals("11")) {
-
+            // 支付失败
+            PaymentResultActivity.startActivity(mainActivity, false, message);
         }
     }
 
